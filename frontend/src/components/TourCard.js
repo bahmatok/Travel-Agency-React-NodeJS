@@ -36,6 +36,11 @@ const TourCard = ({ tour }) => {
 
   return (
     <div className="tour-card">
+      {tour.generatedImage && (
+        <div className="tour-card-image-container">
+          <img src={tour.generatedImage} alt={`${tour.destination?.city || 'Tour'}`} className="tour-card-image" />
+        </div>
+      )}
       <div className="tour-card-header">
         <h3 className="tour-card-title">
           {tour.destination?.city}, {tour.destination?.country}

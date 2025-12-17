@@ -26,7 +26,6 @@ const BookingForm = ({ tour, onClose, onSuccess }) => {
       const response = await axios.get('/api/clients');
       setClients(response.data);
     } catch (error) {
-      console.error('Error fetching clients:', error);
     }
   };
 
@@ -72,7 +71,6 @@ const BookingForm = ({ tour, onClose, onSuccess }) => {
 
       onSuccess();
     } catch (error) {
-      console.error('Error creating booking:', error);
       alert('Ошибка при создании бронирования: ' + (error.response?.data?.message || error.message));
     } finally {
       setLoading(false);

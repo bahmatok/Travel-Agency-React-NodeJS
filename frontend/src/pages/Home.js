@@ -63,7 +63,7 @@ function Home() {
       }} />
 
       <DestinationFinder onDestinationSelect={(destination) => {
-        console.log('Selected destination:', destination);
+        // Обработка выбранного направления
       }} />
     </div>
   );

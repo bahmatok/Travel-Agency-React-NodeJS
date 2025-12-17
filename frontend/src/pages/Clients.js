@@ -38,7 +38,6 @@ class Clients extends Component {
   autoSaveDraft = () => {
     const draft = localStorage.getItem('clientDraft');
     if (draft) {
-      console.log('Auto-saving draft...');
       // In a real app, you might send this to a backend endpoint
     }
   };

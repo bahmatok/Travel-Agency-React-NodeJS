@@ -57,6 +57,14 @@ const tourSchema = new mongoose.Schema({
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
+  },
+  generatedImage: {
+    type: String, // Base64 изображение или URL
+    default: null
+  },
+  imagePrompt: {
+    type: String, // Промпт, использованный для генерации
+    default: null
   }
 });
 

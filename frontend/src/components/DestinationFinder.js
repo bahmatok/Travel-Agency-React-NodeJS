@@ -50,7 +50,7 @@ const DestinationFinder = ({ onDestinationSelect }) => {
       // POST запрос к backend
       const response = await axios.post(
         '/api/ai/places',
-        { preferences: location },
+        { location: location }, // Исправлено: отправляем location вместо preferences
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -59,15 +59,14 @@ const DestinationFinder = ({ onDestinationSelect }) => {
         }
       );
 
-      // backend возвращает recommendations
-      const data = response.data.recommendations || [];
+      // backend возвращает results
+      const data = response.data.results || [];
 
       dispatch({ type: 'FETCH_SUCCESS', payload: data });
 
     } catch (error) {
       const errorMessage = error.response?.data?.message || error.message;
       dispatch({ type: 'FETCH_ERROR', payload: errorMessage });
-      console.error('DestinationFinder Error:', error);
     }
   };
 
@@ -105,11 +104,15 @@ const DestinationFinder = ({ onDestinationSelect }) => {
               className="destination-item"
               onClick={() => handleDestinationClick(place)}
             >
-              <h4>{place.place}</h4>
+              <h4>{place.name || place.place || `Место ${index + 1}`}</h4>
               {place.description && <p>{place.description}</p>}
-              {place.country && <p>{place.country}</p>}
-              {place.bestSeason && <p>Сезон: {place.bestSeason}</p>}
-              {place.priceLevel && <p>💰 Уровень цен: {place.priceLevel}</p>}
+              {place.formatted_address && place.formatted_address !== place.description && (
+                <p>📍 {place.formatted_address}</p>
+              )}
+              {place.reason && <p>💡 {place.reason}</p>}
+              {place.rating !== null && place.rating !== undefined && (
+                <p>⭐ Рейтинг: {typeof place.rating === 'number' ? place.rating.toFixed(1) : place.rating}</p>
+              )}
             </div>
           ))}
         </div>

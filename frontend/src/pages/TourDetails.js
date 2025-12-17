@@ -4,8 +4,6 @@ import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import TimeZoneDisplay from '../components/TimeZoneDisplay';
 import BookingForm from '../components/BookingForm';
-import ImageGenerator from '../components/ImageGenerator';
-import FileUpload from '../components/FileUpload';
 import './TourDetails.css';
 
 function TourDetails() {
@@ -16,6 +14,9 @@ function TourDetails() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showBookingForm, setShowBookingForm] = useState(false);
+  const [showImageGenerator, setShowImageGenerator] = useState(false);
+  const [imagePrompt, setImagePrompt] = useState('');
+  const [generatingImage, setGeneratingImage] = useState(false);
 
   useEffect(() => {
     fetchTourDetails();
@@ -27,10 +28,58 @@ function TourDetails() {
       setLoading(true);
       const response = await axios.get(`/api/tours/${id}`);
       setTour(response.data);
+      if (response.data.imagePrompt) {
+        setImagePrompt(response.data.imagePrompt);
+      } else if (response.data.destination) {
+        setImagePrompt(`Beautiful travel destination ${response.data.destination.city || response.data.destination.name}, ${response.data.destination.country || ''}, travel photography`);
+      }
     } catch (err) {
       setError(err.message);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleGenerateImage = async () => {
+    if (!imagePrompt.trim()) {
+      alert('Введите описание для генерации изображения');
+      return;
+    }
+
+    if (!user) {
+      alert('Необходима авторизация для генерации изображений');
+      return;
+    }
+
+    setGeneratingImage(true);
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.post(
+        `/api/ai/generate-tour-image/${id}`,
+        { prompt: imagePrompt },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+
+      // Обновляем тур с новым изображением из ответа
+      if (response.data.tour) {
+        setTour(response.data.tour);
+      } else {
+        // Если в ответе нет тура, загружаем заново
+        const updatedTour = await axios.get(`/api/tours/${id}`);
+        setTour(updatedTour.data);
+      }
+      setShowImageGenerator(false);
+      alert('Изображение успешно сгенерировано и сохранено!');
+    } catch (error) {
+      const errorMessage = error.response?.data?.message || error.message;
+      alert('Ошибка генерации изображения: ' + errorMessage);
+    } finally {
+      setGeneratingImage(false);
     }
   };
 
@@ -77,9 +126,74 @@ function TourDetails() {
         <div className="tour-price-large">{formatPrice(tour.price)}</div>
       </div>
 
+      {/* Отображение изображения тура */}
+      {tour.generatedImage && (
+        <div className="tour-image-container">
+          <img src={tour.generatedImage} alt={`${tour.destination?.city || 'Tour'}`} className="tour-generated-image" />
+        </div>
+      )}
+
       <div className="tour-details-content">
         <div className="tour-info-section">
           <h2>Информация о туре</h2>
+          
+          {/* Кнопка генерации/перегенерации изображения */}
+          {user && (
+            <div className="tour-image-controls">
+              {!tour.generatedImage ? (
+                <button 
+                  onClick={() => setShowImageGenerator(true)} 
+                  className="generate-image-button"
+                >
+                  🖼️ Сгенерировать изображение
+                </button>
+              ) : (
+                <button 
+                  onClick={() => setShowImageGenerator(true)} 
+                  className="regenerate-image-button"
+                >
+                  🔄 Перегенерировать изображение
+                </button>
+              )}
+            </div>
+          )}
+
+          {/* Модальное окно для генерации изображения */}
+          {showImageGenerator && user && (
+            <div className="image-generator-modal">
+              <div className="image-generator-modal-content">
+                <button 
+                  className="close-modal-button" 
+                  onClick={() => setShowImageGenerator(false)}
+                >
+                  ×
+                </button>
+                <h3>Генерация изображения тура</h3>
+                <textarea
+                  placeholder="Опишите изображение для тура..."
+                  value={imagePrompt}
+                  onChange={(e) => setImagePrompt(e.target.value)}
+                  className="image-prompt-input"
+                  rows="4"
+                />
+                <div className="image-generator-actions">
+                  <button 
+                    onClick={handleGenerateImage} 
+                    className="generate-button"
+                    disabled={generatingImage || !imagePrompt.trim()}
+                  >
+                    {generatingImage ? 'Генерация...' : 'Сгенерировать'}
+                  </button>
+                  <button 
+                    onClick={() => setShowImageGenerator(false)} 
+                    className="cancel-button"
+                  >
+                    Отмена
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
           <div className="info-grid">
             <div className="info-item">
               <span className="info-label">Отель:</span>
@@ -141,19 +255,6 @@ function TourDetails() {
         />
       )}
 
-      {user && (
-        <>
-          <ImageGenerator 
-            destination={tour.destination}
-            onImageGenerated={(imageUrl) => {
-              console.log('Generated image:', imageUrl);
-            }}
-          />
-          <FileUpload onUploadComplete={(response) => {
-            console.log('File uploaded:', response);
-          }} />
-        </>
-      )}
     </div>
   );
 }

@@ -9,34 +9,11 @@ const passport = require('passport');
 const envPath = path.join(__dirname, '.env');
 const fs = require('fs');
 
-console.log('=== Загрузка переменных окружения ===');
-console.log('Текущая директория:', __dirname);
-console.log('Путь к .env файлу:', envPath);
-console.log('Файл .env существует:', fs.existsSync(envPath));
-
-if (fs.existsSync(envPath)) {
-    console.log('Размер файла .env:', fs.statSync(envPath).size, 'байт');
-    // Показываем первые несколько строк (без значений ключей)
-    const envContent = fs.readFileSync(envPath, 'utf8');
-    const lines = envContent.split('\n').filter(line => line.trim() && !line.trim().startsWith('#'));
-    console.log('Найдено строк в .env:', lines.length);
-    console.log('Примеры переменных (только имена):', lines.slice(0, 5).map(line => line.split('=')[0]));
-}
-
 const result = dotenv.config({ path: envPath });
 
 if (result.error) {
     console.error('Ошибка загрузки .env:', result.error.message);
-} else {
-    console.log('✓ .env файл загружен успешно');
 }
-
-// Логируем загруженные переменные для отладки (только ключи, не значения)
-console.log('\nПроверка переменных окружения:');
-console.log('  POE_API_KEY:', process.env.POE_API_KEY ? `✓ Set (длина: ${process.env.POE_API_KEY.length})` : '✗ Not set');
-console.log('  MONGODB_URI:', process.env.MONGODB_URI ? '✓ Set' : '✗ Not set');
-console.log('  JWT_SECRET:', process.env.JWT_SECRET ? '✓ Set' : '✗ Not set');
-console.log('=====================================\n');
 
 const app = express();
 

@@ -54,7 +54,6 @@ const FileUpload = ({ onUploadComplete }) => {
       if (onUploadComplete) onUploadComplete(response.data);
 
     } catch (error) {
-      console.error('Ошибка загрузки файла:', error);
       const message = error.response?.data?.message || error.message;
       setUploadStatus('Ошибка загрузки: ' + message);
       setUploading(false);
