@@ -85,11 +85,13 @@
   border-radius: 25px;
   font-weight: bold;
   transition: all var(--transition-speed);
+  box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
 }
 
 .tour-button:hover {
   transform: scale(1.05);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 5px 20px rgba(255, 107, 53, 0.5);
+  background: linear-gradient(135deg, var(--secondary-color) 0%, var(--accent-color) 100%);
 }
 
 .tour-button:active {

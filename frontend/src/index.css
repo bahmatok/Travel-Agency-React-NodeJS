@@ -1,9 +1,10 @@
 :root {
-  --primary-color: #ff6b6b;
-  --secondary-color: #4ecdc4;
-  --accent-color: #ffe66d;
-  --dark-color: #2c3e50;
-  --light-color: #ecf0f1;
+  --primary-color: #FF6B35;
+  --secondary-color: #FF8C42;
+  --accent-color: #FFA07A;
+  --dark-color: #2C2C2C;
+  --light-color: #FFFFFF;
+  --bg-color: #F5F5F5;
   --success-color: #2ecc71;
   --error-color: #e74c3c;
   --transition-speed: 0.3s;
@@ -21,7 +22,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: var(--light-color);
+  background-color: var(--bg-color);
   color: var(--dark-color);
   line-height: 1.6;
 }

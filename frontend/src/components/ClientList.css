@@ -54,12 +54,13 @@
 .edit-button {
   background-color: var(--secondary-color);
   color: white;
+  box-shadow: 0 4px 15px rgba(255, 140, 66, 0.3);
 }
 
 .edit-button:hover {
-  background-color: #3ab5ad;
+  background-color: var(--primary-color);
   transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 5px 20px rgba(255, 107, 53, 0.5);
 }
 
 .delete-button {
