@@ -1,0 +1,42 @@
+.catalog {
+  animation: fadeIn 0.5s ease-in;
+}
+
+.catalog-title {
+  text-align: center;
+  margin-bottom: 2rem;
+  color: var(--dark-color);
+  font-size: 2.5rem;
+}
+
+.loading, .error {
+  text-align: center;
+  padding: 3rem;
+  font-size: 1.2rem;
+}
+
+.error {
+  color: var(--error-color);
+}
+
+.tours-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.no-tours {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 3rem;
+  font-size: 1.2rem;
+  color: #666;
+}
+
+@media (max-width: 768px) {
+  .tours-grid {
+    grid-template-columns: 1fr;
+  }
+}
+

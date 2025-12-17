@@ -1,0 +1,47 @@
+.timezone-display {
+  margin: 1rem 0;
+  padding: 1rem;
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.timezone-label {
+  font-weight: bold;
+  color: var(--dark-color);
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.timezone-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.timezone-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.timezone-type {
+  font-size: 0.9rem;
+  color: #666;
+  font-weight: 500;
+}
+
+.timezone-value {
+  font-size: 1rem;
+  color: var(--dark-color);
+  font-family: monospace;
+}
+
+@media (min-width: 768px) {
+  .timezone-item {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+}
+

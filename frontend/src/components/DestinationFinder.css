@@ -1,0 +1,82 @@
+.destination-finder {
+  background: white;
+  padding: 2rem;
+  border-radius: 15px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  margin: 2rem 0;
+}
+
+.destination-finder h3 {
+  margin-bottom: 1.5rem;
+  color: var(--dark-color);
+}
+
+.finder-controls {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.finder-input {
+  flex: 1;
+  padding: 0.75rem;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+}
+
+.finder-input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+}
+
+.finder-button {
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all var(--transition-speed);
+}
+
+.finder-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.finder-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.destinations-list {
+  display: grid;
+  gap: 1rem;
+}
+
+.destination-item {
+  padding: 1rem;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all var(--transition-speed);
+}
+
+.destination-item:hover {
+  background-color: #f0f0f0;
+  transform: translateX(5px);
+}
+
+.destination-item h4 {
+  margin: 0 0 0.5rem 0;
+  color: var(--dark-color);
+}
+
+.destination-item p {
+  margin: 0.25rem 0;
+  color: #666;
+  font-size: 0.9rem;
+}
+

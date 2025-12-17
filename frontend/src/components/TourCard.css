@@ -1,0 +1,102 @@
+.tour-card {
+  background: white;
+  border-radius: 15px;
+  padding: 1.5rem;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  transition: all var(--transition-speed);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.tour-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.tour-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.tour-card-title {
+  color: var(--dark-color);
+  font-size: 1.3rem;
+  margin: 0;
+  flex: 1;
+}
+
+.hotel-class {
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+.hotel-class-economy {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}
+
+.hotel-class-standard {
+  background-color: #e3f2fd;
+  color: #1565c0;
+}
+
+.hotel-class-luxury {
+  background-color: #fff3e0;
+  color: #e65100;
+}
+
+.hotel-class-premium {
+  background-color: #f3e5f5;
+  color: #6a1b9a;
+}
+
+.tour-card-body {
+  flex: 1;
+  margin-bottom: 1rem;
+}
+
+.tour-card-body p {
+  margin: 0.5rem 0;
+  color: #666;
+}
+
+.tour-price {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: var(--primary-color);
+  margin-bottom: 1rem;
+}
+
+.tour-button {
+  display: block;
+  text-align: center;
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+  color: white;
+  text-decoration: none;
+  border-radius: 25px;
+  font-weight: bold;
+  transition: all var(--transition-speed);
+}
+
+.tour-button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.tour-button:active {
+  transform: scale(0.98);
+}
+
+.tour-card-footer {
+  margin-top: auto;
+}
+

@@ -1,0 +1,89 @@
+.client-list {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.client-card {
+  background: white;
+  padding: 2rem;
+  border-radius: 15px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  transition: all var(--transition-speed);
+}
+
+.client-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.client-info h3 {
+  margin-bottom: 1rem;
+  color: var(--dark-color);
+  font-size: 1.5rem;
+}
+
+.client-info p {
+  margin: 0.5rem 0;
+  color: #666;
+}
+
+.client-dates {
+  margin: 1.5rem 0;
+  padding-top: 1.5rem;
+  border-top: 2px solid #eee;
+}
+
+.client-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.edit-button,
+.delete-button {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all var(--transition-speed);
+  font-size: 1rem;
+}
+
+.edit-button {
+  background-color: var(--secondary-color);
+  color: white;
+}
+
+.edit-button:hover {
+  background-color: #3ab5ad;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.delete-button {
+  background-color: var(--error-color);
+  color: white;
+}
+
+.delete-button:hover {
+  background-color: #c0392b;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.edit-button:active,
+.delete-button:active {
+  transform: translateY(0);
+}
+
+.no-clients {
+  text-align: center;
+  padding: 3rem;
+  font-size: 1.2rem;
+  color: #666;
+  background: white;
+  border-radius: 15px;
+}
+
