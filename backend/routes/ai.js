@@ -268,7 +268,6 @@ router.post('/generate-tour-image/:tourId', auth, async (req, res) => {
       }
       
       // Сохраняем изображение в БД
-      // Важно: используем findByIdAndUpdate вместо save после populate
       try {
         const updatedTour = await Tour.findByIdAndUpdate(
           tourId,
