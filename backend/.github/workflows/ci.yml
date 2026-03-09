@@ -1,0 +1,90 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    services:
+      mongodb:
+        image: mongo:6
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd "mongosh --eval 'db.runCommand({ping:1})'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Use Node.js 20.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: 'npm'
+          cache-dependency-path: |
+            backend/package-lock.json
+            frontend/package-lock.json
+
+      - name: Install backend dependencies
+        working-directory: ./backend
+        run: npm ci
+
+      - name: Install frontend dependencies
+        working-directory: ./frontend
+        run: npm ci
+
+      - name: Build frontend
+        working-directory: ./frontend
+        run: npm run build
+
+      - name: Upload frontend build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-build
+          path: frontend/build
+
+      - name: Wait for MongoDB to be ready
+        run: |
+          for i in {1..30}; do
+            nc -z localhost 27017 && echo "MongoDB is ready" && break
+            echo "Waiting for MongoDB..."
+            sleep 2
+          done
+
+      - name: Run backend tests with real MongoDB
+        working-directory: ./backend
+        env:
+          NODE_ENV: test
+          MONGODB_URI: mongodb://localhost:27017/travel-agency-test
+          JWT_SECRET: test-secret
+          AI_API_TYPE: huggingface
+          HUGGINGFACE_API_KEY: dummy-key
+          HUGGINGFACE_MODEL: dummy-model
+          HUGGINGFACE_PROVIDER: dummy-provider
+          AI_MAX_TOKENS: 1000
+          AI_TEMPERATURE: 0.7
+          HUGGINGFACE_IMAGE_MODEL: dummy-image-model
+          HF_IMAGE_STEPS: 9
+          HF_IMAGE_GUIDANCE: 0.0
+          HF_IMAGE_HEIGHT: 1024
+          HF_IMAGE_WIDTH: 1024
+          POE_API_KEY: dummy-poe-key
+          POE_API_URL: https://dummy.com
+          POE_MODEL: dummy-model
+        run: npm test -- --runInBand
+
+      - name: Upload coverage report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: backend/coverage
