@@ -3,6 +3,7 @@ const { body, validationResult } = require('express-validator');
 const Booking = require('../models/Booking');
 const Tour = require('../models/Tour');
 const auth = require('../middleware/auth');
+const Client = require('../models/Client');
 
 const router = express.Router();
 
@@ -52,10 +53,10 @@ router.get('/:id', auth, async (req, res) => {
 
 // Create booking (auth required)
 router.post('/', auth, [
-  body('client').isMongoId(),
-  body('tours').isArray({ min: 1 }),
-  body('tours.*.tour').isMongoId(),
-  body('tours.*.quantity').optional().isInt({ min: 1 })
+  body('client').isMongoId().withMessage('Invalid client ID'),
+  body('tours').isArray({ min: 1 }).withMessage('At least one tour is required'),
+  body('tours.*.tour').isMongoId().withMessage('Invalid tour ID'),
+  body('tours.*.quantity').optional().isInt({ min: 1 }).withMessage('Quantity must be at least 1')
 ], async (req, res) => {
   try {
     const errors = validationResult(req);
@@ -63,11 +64,19 @@ router.post('/', auth, [
       return res.status(400).json({ errors: errors.array() });
     }
 
+    const clientExists = await Client.findById(req.body.client);
+    if (!clientExists) {
+      return res.status(400).json({ message: 'Client not found' });
+    }
+
     // Calculate total price
     let totalPrice = 0;
     for (const tourItem of req.body.tours) {
       const tour = await Tour.findById(tourItem.tour);
-      if (!tour || !tour.available) {
+      if (!tour) {
+        return res.status(400).json({ message: `Tour ${tourItem.tour} not found` });
+      }
+      if (!tour.available) {
         return res.status(400).json({ message: `Tour ${tourItem.tour} is not available` });
       }
       totalPrice += tour.price * (tourItem.quantity || 1);
