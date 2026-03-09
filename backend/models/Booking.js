@@ -6,18 +6,22 @@ const bookingSchema = new mongoose.Schema({
     ref: 'Client',
     required: [true, 'Client is required']
   },
-  tours: [{
-    tour: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Tour',
-      required: true
-    },
-    quantity: {
-      type: Number,
-      default: 1,
-      min: 1
-    }
-  }],
+  tours: {
+    type: [{
+      tour: { 
+        type: mongoose.Schema.Types.ObjectId, 
+        ref: 'Tour', 
+        required: true 
+      },
+      quantity: { 
+        type: Number, 
+        default: 1, 
+        min: 1 
+      }
+    }],
+    required: true,
+    validate: [v => v.length > 0, 'At least one tour required']
+  },
   totalPrice: {
     type: Number,
     required: [true, 'Total price is required'],

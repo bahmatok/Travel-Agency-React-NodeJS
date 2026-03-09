@@ -21,7 +21,6 @@ const tourSchema = new mongoose.Schema({
   duration: {
     type: Number,
     required: [true, 'Duration is required'],
-    enum: [1, 2, 4],
     validate: {
       validator: function(v) {
         return [1, 2, 4].includes(v);
