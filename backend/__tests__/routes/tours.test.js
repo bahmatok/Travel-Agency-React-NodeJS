@@ -7,14 +7,12 @@ const Destination = require('../../models/Destination');
 const User = require('../../models/User');
 
 describe('Tours Routes', () => {
-  // Вспомогательная функция для создания токена
   const generateToken = (userId) => jwt.sign({ userId }, process.env.JWT_SECRET || 'secret', { expiresIn: '1h' });
 
   describe('GET /api/tours (public)', () => {
     let destination;
 
     beforeEach(async () => {
-      // Создаём направление для тестовых туров
       destination = await Destination.create({
         country: 'Тестовая страна',
         city: 'Тестовый город',
