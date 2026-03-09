@@ -44,10 +44,13 @@ router.get('/:id', async (req, res) => {
 
 // Create destination (auth required)
 router.post('/', auth, [
-  body('country').trim().notEmpty(),
-  body('city').trim().notEmpty(),
-  body('climate').isIn(['tropical', 'temperate', 'continental', 'arctic', 'mediterranean', 'desert']),
-  body('climateDescription').trim().notEmpty()
+  body('country').trim().notEmpty().withMessage('Country is required'),
+  body('city').trim().notEmpty().withMessage('City is required'),
+  body('climate').isIn(['tropical', 'temperate', 'continental', 'arctic', 'mediterranean', 'desert']).withMessage('Invalid climate type'),
+  body('climateDescription').trim().notEmpty().withMessage('Climate description is required'),
+  body('hotels').optional().isArray().withMessage('Hotels must be an array'),
+  body('hotels.*.name').if(body('hotels').exists()).notEmpty().withMessage('Hotel name is required'),
+  body('hotels.*.class').if(body('hotels').exists()).isIn(['economy', 'standard', 'luxury', 'premium']).withMessage('Invalid hotel class')
 ], async (req, res) => {
   try {
     const errors = validationResult(req);
@@ -62,13 +65,22 @@ router.post('/', auth, [
     await destination.save();
     res.status(201).json(destination);
   } catch (error) {
+    if (error.name === 'ValidationError') {
+      return res.status(400).json({ message: 'Validation error', error: error.message });
+    }
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 });
 
 // Update destination (auth required)
 router.put('/:id', auth, [
-  body('climate').optional().isIn(['tropical', 'temperate', 'continental', 'arctic', 'mediterranean', 'desert'])
+  body('country').optional().trim().notEmpty().withMessage('Country cannot be empty'),
+  body('city').optional().trim().notEmpty().withMessage('City cannot be empty'),
+  body('climate').optional().isIn(['tropical', 'temperate', 'continental', 'arctic', 'mediterranean', 'desert']).withMessage('Invalid climate type'),
+  body('climateDescription').optional().trim().notEmpty().withMessage('Climate description cannot be empty'),
+  body('hotels').optional().isArray().withMessage('Hotels must be an array'),
+  body('hotels.*.name').if(body('hotels').exists()).notEmpty().withMessage('Hotel name is required'),
+  body('hotels.*.class').if(body('hotels').exists()).isIn(['economy', 'standard', 'luxury', 'premium']).withMessage('Invalid hotel class')
 ], async (req, res) => {
   try {
     const errors = validationResult(req);
@@ -88,6 +100,9 @@ router.put('/:id', auth, [
     
     res.json(destination);
   } catch (error) {
+    if (error.name === 'ValidationError') {
+      return res.status(400).json({ message: 'Validation error', error: error.message });
+    }
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 });
@@ -106,4 +121,3 @@ router.delete('/:id', auth, async (req, res) => {
 });
 
 module.exports = router;
-
