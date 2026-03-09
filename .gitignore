@@ -9,7 +9,7 @@ frontend/node_modules/
 *.docx
 
 # Environment variables
-# backend/.env
+backend/.env
 .env
 
 # Build outputs
@@ -41,3 +41,5 @@ coverage/
 dist/
 build/
 
+# Scripts
+docker_run.sh

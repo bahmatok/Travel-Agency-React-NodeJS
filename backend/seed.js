@@ -26,8 +26,7 @@ const seedData = async () => {
         name: 'Admin User',
         role: 'admin'
       });
-      await admin.save();
-    }
+    }    
 
     // Create destinations
     const destinations = [
