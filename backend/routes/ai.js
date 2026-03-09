@@ -164,6 +164,7 @@ async function aiChat(prompt) {
 // ======================
 //     PLACES AI
 // ======================
+
 router.post('/places', auth, async (req, res) => {
   try {
     const { location } = req.body;
@@ -172,14 +173,25 @@ router.post('/places', auth, async (req, res) => {
       return res.status(400).json({ message: "Location is required" });
     }
 
-    // Простой промпт в одну строку с префиксом "рекомендации, куда сходить в"
     const fullPrompt = `рекомендации, куда сходить в ${location}. Верни JSON массив: [{"name":"...","description":"...","reason":"...","rating":}]. Дай 5 достопримечательностей. Для каждого места укажи реалистичный рейтинг. Только JSON.`;
     const aiRaw = await aiChat(fullPrompt);
 
     let data;
     try {
       const jsonMatch = aiRaw.match(/\[[\s\S]*\]/);
-      data = jsonMatch ? JSON.parse(jsonMatch[0]) : null;
+      if (!jsonMatch) {
+        return res.status(500).json({
+          message: "Invalid JSON received from AI",
+          raw: aiRaw
+        });
+      }
+      data = JSON.parse(jsonMatch[0]);
+      if (!Array.isArray(data)) {
+        return res.status(500).json({
+          message: "AI response is not an array",
+          raw: aiRaw
+        });
+      }
     } catch {
       return res.status(500).json({
         message: "Invalid JSON received from AI",
@@ -191,14 +203,13 @@ router.post('/places', auth, async (req, res) => {
       name: p.name || `Место ${i + 1}`,
       description: p.description || '',
       formatted_address: p.formatted_address || p.address || p.location || '',
-      rating: p.rating ? parseFloat(p.rating) : null, // Используем рейтинг из AI или null
+      rating: p.rating ? parseFloat(p.rating) : null,
       reason: p.reason || "AI Recommendation"
     }));
 
     res.json({ results: formatted });
 
   } catch (err) {
-    // Детальная обработка ошибок для отладки
     const errorMessage = err.message || 'Unknown error';
     const errorDetails = err.response?.data || err.response?.statusText;
     
