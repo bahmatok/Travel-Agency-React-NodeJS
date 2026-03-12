@@ -122,6 +122,37 @@ describe('Clients Routes', () => {
       expect(res.status).toBe(401);
     });
 
+    it('should return 401 if token is expired', async () => {
+      const expiredToken = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '-10s' });
+      const res = await request(app)
+        .post('/api/clients')
+        .set('Authorization', `Bearer ${expiredToken}`)
+        .send(newClient);
+      expect(res.status).toBe(401);
+      expect(res.body.message).toMatch(/expired/i);
+    });
+
+    it('should return 401 if token has invalid signature', async () => {
+      const wrongSecretToken = jwt.sign({ userId: user._id }, 'wrong-secret');
+      const res = await request(app)
+        .post('/api/clients')
+        .set('Authorization', `Bearer ${wrongSecretToken}`)
+        .send(newClient);
+      expect(res.status).toBe(401);
+      expect(res.body.message).toMatch(/invalid token/i);
+    });
+
+    it('should return 401 if user does not exist', async () => {
+      const fakeUserId = new mongoose.Types.ObjectId();
+      const fakeToken = jwt.sign({ userId: fakeUserId }, process.env.JWT_SECRET);
+      const res = await request(app)
+        .post('/api/clients')
+        .set('Authorization', `Bearer ${fakeToken}`)
+        .send(newClient);
+      expect(res.status).toBe(401);
+      expect(res.body.message).toMatch(/user not found/i);
+    });
+
     it('should create client with valid token and data (201)', async () => {
       const res = await request(app)
         .post('/api/clients')
