@@ -46,12 +46,6 @@ jobs:
         working-directory: ./frontend
         run: npm run build
 
-      - name: Upload frontend build artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: frontend-build
-          path: frontend/build
-
       - name: Wait for MongoDB to be ready
         run: |
           for i in {1..30}; do
@@ -60,7 +54,33 @@ jobs:
             sleep 2
           done
 
-      - name: Run backend tests with real MongoDB
+      - name: Start backend server and verify it runs
+        working-directory: ./backend
+        run: |
+          node server.js &
+          SERVER_PID=$!
+          echo "Waiting for server to start..."
+          sleep 10
+          if kill -0 $SERVER_PID 2>/dev/null; then
+            echo "Server process is running"
+            if nc -z localhost 5000; then
+              echo "Port 5000 is listening"
+              kill $SERVER_PID
+            else
+              echo "Port 5000 is not listening"
+              kill $SERVER_PID
+              exit 1
+            fi
+          else
+            echo "Server failed to start"
+            exit 1
+          fi
+        env:
+          NODE_ENV: test
+          MONGODB_URI: mongodb://localhost:27017/travel-agency-test
+          JWT_SECRET: test-secret
+
+      - name: Run backend tests
         working-directory: ./backend
         env:
           NODE_ENV: test
@@ -70,13 +90,7 @@ jobs:
           HUGGINGFACE_API_KEY: dummy-key
           HUGGINGFACE_MODEL: dummy-model
           HUGGINGFACE_PROVIDER: dummy-provider
-          AI_MAX_TOKENS: 1000
-          AI_TEMPERATURE: 0.7
           HUGGINGFACE_IMAGE_MODEL: dummy-image-model
-          HF_IMAGE_STEPS: 9
-          HF_IMAGE_GUIDANCE: 0.0
-          HF_IMAGE_HEIGHT: 1024
-          HF_IMAGE_WIDTH: 1024
           POE_API_KEY: dummy-poe-key
           POE_API_URL: https://dummy.com
           POE_MODEL: dummy-model
